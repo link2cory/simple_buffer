@@ -15,5 +15,6 @@ typedef struct simple_buffer_attr_t {
 *******************************************************************************/
 char simple_buffer_construct(simple_buffer_attr_t *attr, sbd_t *sbd);
 char simple_buffer_destruct(sbd_t *sbd);
+char simple_buffer_put(sbd_t *sbd, char data);
 
 #endif // _SIMPLE_BUFFER_H
