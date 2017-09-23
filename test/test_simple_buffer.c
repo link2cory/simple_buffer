@@ -25,6 +25,7 @@ void setUp(void)
 
 void tearDown(void)
 {
+  TEST_ASSERT(simple_buffer_destruct(&sbd) != -1);
 }
 
 
