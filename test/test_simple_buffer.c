@@ -52,3 +52,14 @@ void test_simple_buffer_put_writes_to_buffer(void)
     TEST_ASSERT(buf_mem[i] == data);
   }
 }
+
+void test_simple_buffer_put_returns_error_when_buffer_full(void)
+{
+  char i;
+  char data = 0;
+
+  for (i=0;i<BUF_MEM_SIZE;i++) {
+    simple_buffer_put(sbd, data);
+  }
+  TEST_ASSERT(simple_buffer_put(sbd, data) == -1);
+}
