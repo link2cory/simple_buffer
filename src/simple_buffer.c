@@ -33,6 +33,7 @@ sb_error_t simple_buffer_put(sbd_t sbd, uint8_t data) {
   return err;
 }
 
-sb_error_t simple_buffer_get(sbd_t sbd) {
-  return (*buf_mem)[--buf_index];
+sb_error_t simple_buffer_get(sbd_t sbd, uint8_t *data) {
+  *data = (*buf_mem)[--buf_index];
+  return SB_ERR_NONE;
 }

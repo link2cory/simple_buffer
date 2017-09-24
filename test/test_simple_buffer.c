@@ -74,8 +74,23 @@ void test_simple_buffer_get_returns_previously_put_data(void)
   for (i=0;i<BUF_MEM_SIZE;i++) {
     data = (uint8_t)rand();
     simple_buffer_put(sbd, data);
-    returned_data = simple_buffer_get(sbd);
 
+    TEST_ASSERT(simple_buffer_get(sbd, &returned_data) == SB_ERR_NONE);
+    TEST_ASSERT(returned_data == data);
+  }
+}
+
+void test_simple_buffer_get_writes_previously_put_data(void)
+{
+  uint8_t i;
+  uint8_t data;
+  uint8_t returned_data;
+
+  for (i=0;i<BUF_MEM_SIZE;i++) {
+    data = (uint8_t)rand();
+    simple_buffer_put(sbd, data);
+
+    TEST_ASSERT(simple_buffer_get(sbd, &returned_data) == SB_ERR_NONE);
     TEST_ASSERT(returned_data == data);
   }
 }
