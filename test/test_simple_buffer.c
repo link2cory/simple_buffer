@@ -15,7 +15,7 @@
 * Local Data
 *******************************************************************************/
 sbd_t sbd;
-static char buf_mem[BUF_MEM_SIZE];
+static uint8_t buf_mem[BUF_MEM_SIZE];
 
 /*******************************************************************************
 * Setup and Teardown
@@ -28,12 +28,12 @@ void setUp(void)
   attr.num_elem = BUF_MEM_SIZE;
   attr.buf_mem = &buf_mem;
 
-  TEST_ASSERT(simple_buffer_construct(&attr, &sbd) != -1);
+  TEST_ASSERT(simple_buffer_construct(&attr, &sbd) == SB_ERR_NONE);
 }
 
 void tearDown(void)
 {
-  TEST_ASSERT(simple_buffer_destruct(&sbd) != -1);
+  TEST_ASSERT(simple_buffer_destruct(&sbd) == SB_ERR_NONE);
 }
 
 
@@ -42,24 +42,24 @@ void tearDown(void)
 *******************************************************************************/
 void test_simple_buffer_put_writes_to_buffer(void)
 {
-  char i;
-  char data;
+  uint8_t i;
+  uint8_t data;
 
   for (i=0;i<BUF_MEM_SIZE;i++) {
-    data = (char)rand();
+    data = (uint8_t)rand();
 
-    TEST_ASSERT(simple_buffer_put(sbd, data) != -1);
+    TEST_ASSERT(simple_buffer_put(sbd, data) == SB_ERR_NONE);
     TEST_ASSERT(buf_mem[i] == data);
   }
 }
 
 void test_simple_buffer_put_returns_error_when_buffer_full(void)
 {
-  char i;
-  char data = 0;
+  uint8_t i;
+  uint8_t data = 0;
 
   for (i=0;i<BUF_MEM_SIZE;i++) {
     simple_buffer_put(sbd, data);
   }
-  TEST_ASSERT(simple_buffer_put(sbd, data) == -1);
+  TEST_ASSERT(simple_buffer_put(sbd, data) == SB_ERR_BUF_FULL);
 }
