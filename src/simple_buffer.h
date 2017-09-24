@@ -10,7 +10,6 @@
 * TYPEDEFS
 *******************************************************************************/
 typedef uint8_t sbd_t;
-
 typedef struct simple_buffer_attr_t {
   uint8_t num_elem;
   uint8_t (*buf_mem)[];
@@ -30,5 +29,6 @@ sb_error_t simple_buffer_construct(
 );
 sb_error_t simple_buffer_destruct(sbd_t *sbd);
 sb_error_t simple_buffer_put(sbd_t sbd, uint8_t data);
+sb_error_t simple_buffer_get(sbd_t sbd);
 
 #endif // _SIMPLE_BUFFER_H
