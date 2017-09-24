@@ -15,7 +15,7 @@
 * Local Data
 *******************************************************************************/
 sbd_t sbd;
-char buf_mem[BUF_MEM_SIZE];
+static char buf_mem[BUF_MEM_SIZE];
 
 /*******************************************************************************
 * Setup and Teardown
@@ -42,8 +42,13 @@ void tearDown(void)
 *******************************************************************************/
 void test_simple_buffer_put_writes_to_buffer(void)
 {
-  char data = (char)rand();
+  char i;
+  char data;
 
-  TEST_ASSERT(simple_buffer_put(sbd, data) != -1);
-  TEST_ASSERT(buf_mem[0] == data);
+  for (i=0;i<BUF_MEM_SIZE;i++) {
+    data = (char)rand();
+
+    TEST_ASSERT(simple_buffer_put(sbd, data) != -1);
+    TEST_ASSERT(buf_mem[i] == data);
+  }
 }
