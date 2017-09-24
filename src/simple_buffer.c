@@ -34,6 +34,13 @@ sb_error_t simple_buffer_put(sbd_t sbd, uint8_t data) {
 }
 
 sb_error_t simple_buffer_get(sbd_t sbd, uint8_t *data) {
-  *data = (*buf_mem)[--buf_index];
-  return SB_ERR_NONE;
+  sb_error_t err = SB_ERR_NONE;
+
+  if (buf_index > 0) {
+    *data = (*buf_mem)[--buf_index];
+
+  } else {
+    err = SB_ERR_BUF_EMPTY;
+  }
+  return err;
 }

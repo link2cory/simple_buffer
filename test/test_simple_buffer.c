@@ -94,3 +94,10 @@ void test_simple_buffer_get_writes_previously_put_data(void)
     TEST_ASSERT(returned_data == data);
   }
 }
+
+void test_simple_buffer_get_returns_error_when_buffer_empty(void)
+{
+  uint8_t returned_data;
+
+  TEST_ASSERT(simple_buffer_get(sbd, &returned_data) == SB_ERR_BUF_EMPTY);
+}

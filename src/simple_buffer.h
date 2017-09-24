@@ -17,7 +17,8 @@ typedef struct simple_buffer_attr_t {
 
 typedef enum sb_error_t {
   SB_ERR_NONE,
-  SB_ERR_BUF_FULL
+  SB_ERR_BUF_FULL,
+  SB_ERR_BUF_EMPTY
 } sb_error_t;
 
 /*******************************************************************************
