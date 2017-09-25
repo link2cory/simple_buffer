@@ -43,6 +43,7 @@ sb_error_t simple_buffer_get(sbd_t sbd, uint8_t *data) {
   if (num_elem-- > 0) {
     *data = (*buf_mem)[tail++];
   } else {
+    num_elem = 0;
     err = SB_ERR_BUF_EMPTY;
   }
 

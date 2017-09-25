@@ -103,3 +103,15 @@ void test_simple_buffer_get_returns_error_when_buffer_empty(void)
 
   TEST_ASSERT(simple_buffer_get(sbd, &returned_data) == SB_ERR_BUF_EMPTY);
 }
+
+void test_simple_buffer_state_unchanged_after_get_called_on_empty_buffer(void)
+{
+  uint8_t i;
+  uint8_t returned_data;
+  uint8_t buffered_data = (uint8_t)rand();
+
+  TEST_ASSERT(simple_buffer_get(sbd, &returned_data) == SB_ERR_BUF_EMPTY);
+  simple_buffer_put(sbd, buffered_data);
+  TEST_ASSERT(simple_buffer_get(sbd, &returned_data) == SB_ERR_NONE);
+  TEST_ASSERT(returned_data == buffered_data);
+}
