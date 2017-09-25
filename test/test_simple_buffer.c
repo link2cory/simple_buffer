@@ -80,18 +80,20 @@ void test_simple_buffer_get_returns_previously_put_data(void)
   }
 }
 
-void test_simple_buffer_get_writes_previously_put_data(void)
+void test_simple_buffer_get_writes_previously_put_data_fifo(void)
 {
   uint8_t i;
-  uint8_t data;
+  uint8_t buffered_data[BUF_MEM_SIZE];
   uint8_t returned_data;
 
   for (i=0;i<BUF_MEM_SIZE;i++) {
-    data = (uint8_t)rand();
-    simple_buffer_put(sbd, data);
+    buffered_data[i] = (uint8_t)rand();
+    simple_buffer_put(sbd, buffered_data[i]);
+  }
 
+  for (i=0;i<BUF_MEM_SIZE;i++) {
     TEST_ASSERT(simple_buffer_get(sbd, &returned_data) == SB_ERR_NONE);
-    TEST_ASSERT(returned_data == data);
+    TEST_ASSERT(returned_data == buffered_data[i]);
   }
 }
 
