@@ -160,3 +160,35 @@ void test_simple_buffer_operates_properly_if_filled_and_emptied_many_times(void)
     }
   }
 }
+
+void test_simple_buffer_can_construct_multiple_unique_instances(void)
+{
+  static uint8_t buf_mem_1[BUF_MEM_SIZE];
+  uint8_t i;
+  sbd_t sbd_1;
+  uint8_t buffered_data_0[BUF_MEM_SIZE];
+  uint8_t buffered_data_1[BUF_MEM_SIZE];
+  uint8_t returned_data;
+
+  simple_buffer_attr_t attr;
+  attr.num_elem = BUF_MEM_SIZE;
+  attr.buf_mem = &buf_mem_1;
+
+  TEST_ASSERT(simple_buffer_construct(&attr, &sbd_1) == SB_ERR_NONE);
+  TEST_ASSERT(sbd_1 != sbd);
+
+  // test if the data maintained by each instance is unique
+  for (i=0;i<BUF_MEM_SIZE;i++) {
+    buffered_data_0[i] = (uint8_t)rand();
+    simple_buffer_put(sbd, buffered_data_0[i]);
+    buffered_data_1[i] = (uint8_t)rand();
+    simple_buffer_put(sbd_1, buffered_data_1[i]);
+  }
+
+  for (i=0;i<BUF_MEM_SIZE;i++) {
+    TEST_ASSERT(simple_buffer_get(sbd, &returned_data) == SB_ERR_NONE);
+    TEST_ASSERT(returned_data == buffered_data_0[i]);
+    TEST_ASSERT(simple_buffer_get(sbd_1, &returned_data) == SB_ERR_NONE);
+    TEST_ASSERT(returned_data == buffered_data_1[i]);
+  }
+}

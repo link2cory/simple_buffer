@@ -21,6 +21,13 @@ typedef enum sb_error_t {
   SB_ERR_BUF_EMPTY
 } sb_error_t;
 
+typedef struct simple_buffer_t {
+  uint8_t num_elem;
+  uint8_t (*buf_mem)[];
+  uint8_t head;
+  uint8_t tail;
+} simple_buffer_t;
+
 /*******************************************************************************
 * FUNCTION DECLARATIONS
 *******************************************************************************/
