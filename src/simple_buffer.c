@@ -28,8 +28,13 @@ sb_error_t simple_buffer_destruct(sbd_t *sbd) {
 sb_error_t simple_buffer_put(sbd_t sbd, uint8_t data) {
   sb_error_t err = SB_ERR_NONE;
 
-  if (num_elem++ < max_num_elem) {
+  if (num_elem < max_num_elem) {
     (*buf_mem)[head++] = data;
+    head = ((head == max_num_elem) ? 0:head);
+    if (head == max_num_elem) {
+      head = 0;
+    }
+    num_elem++;
   } else {
     err = SB_ERR_BUF_FULL;
   }
@@ -40,10 +45,11 @@ sb_error_t simple_buffer_put(sbd_t sbd, uint8_t data) {
 sb_error_t simple_buffer_get(sbd_t sbd, uint8_t *data) {
   sb_error_t err = SB_ERR_NONE;
 
-  if (num_elem-- > 0) {
+  if (num_elem > 0) {
     *data = (*buf_mem)[tail++];
+    tail = ((tail == max_num_elem) ? 0:tail);
+    num_elem--;
   } else {
-    num_elem = 0;
     err = SB_ERR_BUF_EMPTY;
   }
 

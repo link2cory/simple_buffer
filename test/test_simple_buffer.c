@@ -115,3 +115,48 @@ void test_simple_buffer_state_unchanged_after_get_called_on_empty_buffer(void)
   TEST_ASSERT(simple_buffer_get(sbd, &returned_data) == SB_ERR_NONE);
   TEST_ASSERT(returned_data == buffered_data);
 }
+
+void test_simple_buffer_state_unchanged_after_put_called_on_full_buffer(void)
+{
+  uint8_t i;
+  uint8_t returned_data;
+  uint8_t buffered_data[BUF_MEM_SIZE];
+  uint8_t extra_buffered_data;
+
+  for (i=0;i<BUF_MEM_SIZE;i++) {
+    buffered_data[i] = (uint8_t)rand();
+    simple_buffer_put(sbd, buffered_data[i]);
+  }
+
+  // attempted put into full buffer
+  simple_buffer_put(sbd, buffered_data[i]);
+
+  // get still functions properly
+  simple_buffer_get(sbd, &returned_data);
+  TEST_ASSERT(returned_data == buffered_data[0]);
+
+  // put still functions properly
+  extra_buffered_data = (uint8_t)rand();
+  simple_buffer_put(sbd, extra_buffered_data);
+  TEST_ASSERT(buf_mem[0] == extra_buffered_data);
+}
+
+void test_simple_buffer_operates_properly_if_filled_and_emptied_many_times(void)
+{
+  uint8_t i;
+  uint8_t cycle_index;
+  uint8_t returned_data;
+  uint8_t buffered_data[BUF_MEM_SIZE];
+
+  for (cycle_index=0;cycle_index<10;cycle_index++) {
+    for (i=0;i<BUF_MEM_SIZE;i++) {
+      buffered_data[i] = (uint8_t)rand();
+      simple_buffer_put(sbd, buffered_data[i]);
+    }
+
+    for (i=0;i<BUF_MEM_SIZE;i++) {
+      TEST_ASSERT(simple_buffer_get(sbd, &returned_data) == SB_ERR_NONE);
+      TEST_ASSERT(returned_data == buffered_data[i]);
+    }
+  }
+}
