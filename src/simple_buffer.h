@@ -7,6 +7,14 @@
 #include <stdint.h>
 
 /*******************************************************************************
+* DEFINES
+*******************************************************************************/
+#define _DEFAULT_MAX_BUFFERS 10
+
+#ifndef SB_MAX_NUM_BUFFERS
+#define SB_MAX_NUM_BUFFERS _DEFAULT_MAX_BUFFERS
+#endif
+/*******************************************************************************
 * TYPEDEFS
 *******************************************************************************/
 typedef uint8_t sbd_t;
@@ -18,7 +26,8 @@ typedef struct simple_buffer_attr_t {
 typedef enum sb_error_t {
   SB_ERR_NONE,
   SB_ERR_BUF_FULL,
-  SB_ERR_BUF_EMPTY
+  SB_ERR_BUF_EMPTY,
+  SB_ERR_BUF_LIMIT
 } sb_error_t;
 
 typedef struct simple_buffer_t {
