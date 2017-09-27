@@ -245,3 +245,37 @@ void test_simple_buffer_constructor_returns_error_when_buf_limit_reached(void)
   attr.buf_mem = &extra_buffer;
   TEST_ASSERT(simple_buffer_construct(&attr, &extra_sbd) == SB_ERR_BUF_LIMIT);
 }
+
+void test_simple_buffer_instances_can_be_different_sizes(void)
+{
+  uint8_t data;
+  uint8_t i;
+  uint8_t second_buf_max_size = 5;
+  simple_buffer_attr_t attr;
+
+  attr.num_elem = second_buf_max_size;
+  attr.buf_mem = &(buf_list[buf_list_index]);
+  simple_buffer_construct(&attr, &buf_handles[buf_list_index++]);
+
+  // check that the error is thrown only after BUF_MEM_SIZE for buffer 0
+  for (i=0;i<BUF_MEM_SIZE;i++) {
+    data = (uint8_t)rand();
+
+    TEST_ASSERT(simple_buffer_put(buf_handles[0], data) == SB_ERR_NONE);
+  }
+
+  TEST_ASSERT(simple_buffer_put(buf_handles[0], data) == SB_ERR_BUF_FULL);
+
+  // check that error is thrown after second_buf_max_size for buffer 1
+  for (i=0;i<second_buf_max_size;i++) {
+    data = (uint8_t)rand();
+
+    TEST_ASSERT(
+      simple_buffer_put(buf_handles[buf_list_index-1], data) == SB_ERR_NONE
+    );
+  }
+
+  TEST_ASSERT(
+    simple_buffer_put(buf_handles[buf_list_index-1], data) == SB_ERR_BUF_FULL
+  );
+}

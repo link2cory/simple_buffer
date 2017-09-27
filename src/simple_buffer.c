@@ -17,8 +17,8 @@ sb_error_t simple_buffer_construct(simple_buffer_attr_t *attr, sbd_t *sbd) {
     _sb[_sb_index].head = 0;
     _sb[_sb_index].tail = 0;
     _sb[_sb_index].num_elem = 0;
+    _sb[_sb_index].max_num_elem = (*attr).num_elem;
     *sbd = _sb_index++;
-    max_num_elem = (*attr).num_elem;
   } else {
     err = SB_ERR_BUF_LIMIT;
   }
@@ -33,10 +33,10 @@ sb_error_t simple_buffer_destruct(sbd_t *sbd) {
 sb_error_t simple_buffer_put(sbd_t sbd, uint8_t data) {
   sb_error_t err = SB_ERR_NONE;
 
-  if (_sb[sbd].num_elem < max_num_elem) {
+  if (_sb[sbd].num_elem < _sb[sbd].max_num_elem) {
     (*_sb[sbd].buf_mem)[_sb[sbd].head++] = data;
-    _sb[sbd].head = ((_sb[sbd].head == max_num_elem) ? 0:_sb[sbd].head);
-    if (_sb[sbd].head == max_num_elem) {
+    _sb[sbd].head = ((_sb[sbd].head == _sb[sbd].max_num_elem) ? 0:_sb[sbd].head);
+    if (_sb[sbd].head == _sb[sbd].max_num_elem) {
       _sb[sbd].head = 0;
     }
     _sb[sbd].num_elem++;
@@ -52,7 +52,7 @@ sb_error_t simple_buffer_get(sbd_t sbd, uint8_t *data) {
 
   if (_sb[sbd].num_elem > 0) {
     *data = (*_sb[sbd].buf_mem)[_sb[sbd].tail++];
-    _sb[sbd].tail = ((_sb[sbd].tail == max_num_elem) ? 0:_sb[sbd].tail);
+    _sb[sbd].tail = ((_sb[sbd].tail == _sb[sbd].max_num_elem) ? 0:_sb[sbd].tail);
     _sb[sbd].num_elem--;
   } else {
     err = SB_ERR_BUF_EMPTY;
