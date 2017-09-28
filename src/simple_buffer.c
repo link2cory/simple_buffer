@@ -38,7 +38,7 @@ sb_err_t sb_construct(sb_attr_t *attr, sbd_t *sbd) {
     _sb[_sb_index].head = 0;
     _sb[_sb_index].tail = 0;
     _sb[_sb_index].num_elem = 0;
-    _sb[_sb_index].max_num_elem = (*attr).num_elem;
+    _sb[_sb_index].max_num_elem = (*attr).max_num_elem;
     _sb[_sb_index].status = SB_STATUS_ACTIVE;
     *sbd = _sb_index++;
   }

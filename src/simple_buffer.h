@@ -20,7 +20,7 @@
 typedef uint8_t sbd_t;
 
 typedef struct sb_attr_t {
-  uint8_t num_elem;
+  uint8_t max_num_elem;
   uint8_t (*buf_mem)[];
 } sb_attr_t;
 

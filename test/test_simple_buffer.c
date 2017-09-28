@@ -28,7 +28,7 @@ void setUp(void)
   srand(time(NULL));
 
   sb_attr_t attr;
-  attr.num_elem = BUF_MEM_SIZE;
+  attr.max_num_elem = BUF_MEM_SIZE;
   attr.buf_mem = &buf_list[buf_list_index];
 
   TEST_ASSERT(
@@ -195,7 +195,7 @@ void test_simple_buffer_can_construct_multiple_unique_instances(void)
   uint8_t returned_data;
 
   sb_attr_t attr;
-  attr.num_elem = BUF_MEM_SIZE;
+  attr.max_num_elem = BUF_MEM_SIZE;
   attr.buf_mem = &buf_mem_1;
 
   TEST_ASSERT(
@@ -229,7 +229,7 @@ void test_sb_constructor_returns_error_when_buf_limit_reached(void)
   sbd_t extra_sbd;
   sb_attr_t attr;
 
-  attr.num_elem = BUF_MEM_SIZE;
+  attr.max_num_elem = BUF_MEM_SIZE;
 
   while(buf_list_index < SB_MAX_NUM_BUFFERS) {
     attr.buf_mem = &(buf_list[buf_list_index]);
@@ -253,7 +253,7 @@ void test_simple_buffer_instances_can_be_different_sizes(void)
   uint8_t second_buf_max_size = 5;
   sb_attr_t attr;
 
-  attr.num_elem = second_buf_max_size;
+  attr.max_num_elem = second_buf_max_size;
   attr.buf_mem = &(buf_list[buf_list_index]);
   sb_construct(&attr, &buf_handles[buf_list_index++]);
 
@@ -283,7 +283,7 @@ void test_simple_buffer_instances_can_be_different_sizes(void)
 void test_sb_constructor_returns_error_passed_used_buf_mem(void)
 {
   sb_attr_t attr;
-  attr.num_elem = BUF_MEM_SIZE;
+  attr.max_num_elem = BUF_MEM_SIZE;
   attr.buf_mem = &buf_list[0];
 
   TEST_ASSERT(
