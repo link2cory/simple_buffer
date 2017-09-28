@@ -279,3 +279,14 @@ void test_simple_buffer_instances_can_be_different_sizes(void)
     simple_buffer_put(buf_handles[buf_list_index-1], data) == SB_ERR_BUF_FULL
   );
 }
+
+void test_simple_buffer_constructor_returns_error_passed_used_buf_mem(void)
+{
+  simple_buffer_attr_t attr;
+  attr.num_elem = BUF_MEM_SIZE;
+  attr.buf_mem = &buf_list[0];
+
+  TEST_ASSERT(
+    simple_buffer_construct(&attr, &buf_handles[buf_list_index-1]) == SB_ERR_BUF_IN_USE
+  );
+}
