@@ -8,31 +8,30 @@ typedef enum sb_status_t {
   SB_STATUS_INACTIVE
 } sb_status_t;
 
-typedef struct simple_buffer_t {
+typedef struct sb_t {
   uint8_t num_elem;
   uint8_t max_num_elem;
   uint8_t (*buf_mem)[];
   uint8_t head;
   uint8_t tail;
   sb_status_t status;
-} simple_buffer_t;
+} sb_t;
 /*******************************************************************************
 * PRIVATE DATA
 *******************************************************************************/
-simple_buffer_t _sb[SB_MAX_NUM_BUFFERS];
+sb_t _sb[SB_MAX_NUM_BUFFERS];
 uint8_t _sb_index = 0;
-uint8_t max_num_elem;
 
 /*******************************************************************************
 * PRIVATE FUNCTION DECLARATIONS
 *******************************************************************************/
-sb_error_t _validate_construct_params(simple_buffer_attr_t *attr, sbd_t *sbd);
+sb_err_t _validate_construct_params(sb_attr_t *attr, sbd_t *sbd);
 
 /*******************************************************************************
 * PUBLIC FUNCTION DEFINITIONS
 *******************************************************************************/
-sb_error_t simple_buffer_construct(simple_buffer_attr_t *attr, sbd_t *sbd) {
-  sb_error_t err = _validate_construct_params(attr, sbd);
+sb_err_t sb_construct(sb_attr_t *attr, sbd_t *sbd) {
+  sb_err_t err = _validate_construct_params(attr, sbd);
 
   if (err == SB_ERR_NONE) {
     _sb[_sb_index].buf_mem = (*attr).buf_mem;
@@ -47,14 +46,14 @@ sb_error_t simple_buffer_construct(simple_buffer_attr_t *attr, sbd_t *sbd) {
   return err;
 }
 
-sb_error_t simple_buffer_destruct(sbd_t *sbd) {
+sb_err_t sb_destruct(sbd_t *sbd) {
   _sb[--_sb_index].status = SB_STATUS_INACTIVE;
 
   return SB_ERR_NONE;
 }
 
-sb_error_t simple_buffer_put(sbd_t sbd, uint8_t data) {
-  sb_error_t err = SB_ERR_NONE;
+sb_err_t sb_put(sbd_t sbd, uint8_t data) {
+  sb_err_t err = SB_ERR_NONE;
 
   if (_sb[sbd].num_elem < _sb[sbd].max_num_elem) {
     (*_sb[sbd].buf_mem)[_sb[sbd].head++] = data;
@@ -70,8 +69,8 @@ sb_error_t simple_buffer_put(sbd_t sbd, uint8_t data) {
   return err;
 }
 
-sb_error_t simple_buffer_get(sbd_t sbd, uint8_t *data) {
-  sb_error_t err = SB_ERR_NONE;
+sb_err_t sb_get(sbd_t sbd, uint8_t *data) {
+  sb_err_t err = SB_ERR_NONE;
 
   if (_sb[sbd].num_elem > 0) {
     *data = (*_sb[sbd].buf_mem)[_sb[sbd].tail++];
@@ -87,8 +86,8 @@ sb_error_t simple_buffer_get(sbd_t sbd, uint8_t *data) {
 /*******************************************************************************
 * PRIVATE FUNCTION DEFINITIONS
 *******************************************************************************/
-sb_error_t _validate_construct_params(simple_buffer_attr_t *attr, sbd_t *sbd) {
-  sb_error_t err = SB_ERR_NONE;
+sb_err_t _validate_construct_params(sb_attr_t *attr, sbd_t *sbd) {
+  sb_err_t err = SB_ERR_NONE;
   uint8_t i;
 
   if (_sb_index < (SB_MAX_NUM_BUFFERS)) {
@@ -100,7 +99,6 @@ sb_error_t _validate_construct_params(simple_buffer_attr_t *attr, sbd_t *sbd) {
         break;
       }
     }
-
   } else {
     err = SB_ERR_BUF_LIMIT;
   }

@@ -27,12 +27,12 @@ void setUp(void)
 {
   srand(time(NULL));
 
-  simple_buffer_attr_t attr;
+  sb_attr_t attr;
   attr.num_elem = BUF_MEM_SIZE;
   attr.buf_mem = &buf_list[buf_list_index];
 
   TEST_ASSERT(
-    simple_buffer_construct(&attr, &buf_handles[buf_list_index++]) == SB_ERR_NONE
+    sb_construct(&attr, &buf_handles[buf_list_index++]) == SB_ERR_NONE
   );
 }
 
@@ -40,7 +40,7 @@ void tearDown(void)
 {
   while (buf_list_index > 0) {
     TEST_ASSERT(
-      simple_buffer_destruct(&buf_handles[--buf_list_index]) == SB_ERR_NONE
+      sb_destruct(&buf_handles[--buf_list_index]) == SB_ERR_NONE
     );
   }
 }
@@ -49,7 +49,7 @@ void tearDown(void)
 /*******************************************************************************
 * Tests
 *******************************************************************************/
-void test_simple_buffer_put_writes_to_buffer(void)
+void test_sb_put_writes_to_buffer(void)
 {
   uint8_t i;
   uint8_t data;
@@ -58,26 +58,26 @@ void test_simple_buffer_put_writes_to_buffer(void)
     data = (uint8_t)rand();
 
     TEST_ASSERT(
-      simple_buffer_put(buf_handles[buf_list_index-1], data) == SB_ERR_NONE
+      sb_put(buf_handles[buf_list_index-1], data) == SB_ERR_NONE
     );
     TEST_ASSERT(buf_list[buf_list_index-1][i] == data);
   }
 }
 
-void test_simple_buffer_put_returns_error_when_buffer_full(void)
+void test_sb_put_returns_error_when_buffer_full(void)
 {
   uint8_t i;
   uint8_t data = 0;
 
   for (i=0;i<BUF_MEM_SIZE;i++) {
-    simple_buffer_put(buf_handles[buf_list_index-1], data);
+    sb_put(buf_handles[buf_list_index-1], data);
   }
   TEST_ASSERT(
-    simple_buffer_put(buf_handles[buf_list_index-1], data) == SB_ERR_BUF_FULL
+    sb_put(buf_handles[buf_list_index-1], data) == SB_ERR_BUF_FULL
   );
 }
 
-void test_simple_buffer_get_returns_previously_put_data(void)
+void test_sb_get_returns_previously_put_data(void)
 {
   uint8_t i;
   uint8_t data;
@@ -85,16 +85,16 @@ void test_simple_buffer_get_returns_previously_put_data(void)
 
   for (i=0;i<BUF_MEM_SIZE;i++) {
     data = (uint8_t)rand();
-    simple_buffer_put(buf_handles[buf_list_index-1], data);
+    sb_put(buf_handles[buf_list_index-1], data);
 
     TEST_ASSERT(
-      simple_buffer_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_NONE
+      sb_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_NONE
     );
     TEST_ASSERT(returned_data == data);
   }
 }
 
-void test_simple_buffer_get_writes_previously_put_data_fifo(void)
+void test_sb_get_writes_previously_put_data_fifo(void)
 {
   uint8_t i;
   uint8_t buffered_data[BUF_MEM_SIZE];
@@ -102,23 +102,23 @@ void test_simple_buffer_get_writes_previously_put_data_fifo(void)
 
   for (i=0;i<BUF_MEM_SIZE;i++) {
     buffered_data[i] = (uint8_t)rand();
-    simple_buffer_put(buf_handles[buf_list_index-1], buffered_data[i]);
+    sb_put(buf_handles[buf_list_index-1], buffered_data[i]);
   }
 
   for (i=0;i<BUF_MEM_SIZE;i++) {
     TEST_ASSERT(
-      simple_buffer_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_NONE
+      sb_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_NONE
     );
     TEST_ASSERT(returned_data == buffered_data[i]);
   }
 }
 
-void test_simple_buffer_get_returns_error_when_buffer_empty(void)
+void test_sb_get_returns_error_when_buffer_empty(void)
 {
   uint8_t returned_data;
 
   TEST_ASSERT(
-    simple_buffer_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_BUF_EMPTY
+    sb_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_BUF_EMPTY
   );
 }
 
@@ -129,11 +129,11 @@ void test_simple_buffer_state_unchanged_after_get_called_on_empty_buffer(void)
   uint8_t buffered_data = (uint8_t)rand();
 
   TEST_ASSERT(
-    simple_buffer_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_BUF_EMPTY
+    sb_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_BUF_EMPTY
   );
-  simple_buffer_put(buf_handles[buf_list_index-1], buffered_data);
+  sb_put(buf_handles[buf_list_index-1], buffered_data);
   TEST_ASSERT(
-    simple_buffer_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_NONE
+    sb_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_NONE
   );
   TEST_ASSERT(returned_data == buffered_data);
 }
@@ -147,19 +147,19 @@ void test_simple_buffer_state_unchanged_after_put_called_on_full_buffer(void)
 
   for (i=0;i<BUF_MEM_SIZE;i++) {
     buffered_data[i] = (uint8_t)rand();
-    simple_buffer_put(buf_handles[buf_list_index-1], buffered_data[i]);
+    sb_put(buf_handles[buf_list_index-1], buffered_data[i]);
   }
 
   // attempted put into full buffer
-  simple_buffer_put(buf_handles[buf_list_index-1], buffered_data[i]);
+  sb_put(buf_handles[buf_list_index-1], buffered_data[i]);
 
   // get still functions properly
-  simple_buffer_get(buf_handles[buf_list_index-1], &returned_data);
+  sb_get(buf_handles[buf_list_index-1], &returned_data);
   TEST_ASSERT(returned_data == buffered_data[0]);
 
   // put still functions properly
   extra_buffered_data = (uint8_t)rand();
-  simple_buffer_put(buf_handles[buf_list_index-1], extra_buffered_data);
+  sb_put(buf_handles[buf_list_index-1], extra_buffered_data);
   TEST_ASSERT(buf_list[buf_list_index-1][0] == extra_buffered_data);
 }
 
@@ -173,12 +173,12 @@ void test_simple_buffer_operates_properly_if_filled_and_emptied_many_times(void)
   for (cycle_index=0;cycle_index<10;cycle_index++) {
     for (i=0;i<BUF_MEM_SIZE;i++) {
       buffered_data[i] = (uint8_t)rand();
-      simple_buffer_put(buf_handles[buf_list_index-1], buffered_data[i]);
+      sb_put(buf_handles[buf_list_index-1], buffered_data[i]);
     }
 
     for (i=0;i<BUF_MEM_SIZE;i++) {
       TEST_ASSERT(
-        simple_buffer_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_NONE
+        sb_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_NONE
       );
       TEST_ASSERT(returned_data == buffered_data[i]);
     }
@@ -194,47 +194,47 @@ void test_simple_buffer_can_construct_multiple_unique_instances(void)
   uint8_t buffered_data_1[BUF_MEM_SIZE];
   uint8_t returned_data;
 
-  simple_buffer_attr_t attr;
+  sb_attr_t attr;
   attr.num_elem = BUF_MEM_SIZE;
   attr.buf_mem = &buf_mem_1;
 
   TEST_ASSERT(
-    simple_buffer_construct(&attr, &buf_handles[buf_list_index++]) == SB_ERR_NONE
+    sb_construct(&attr, &buf_handles[buf_list_index++]) == SB_ERR_NONE
   );
   TEST_ASSERT(buf_handles[buf_list_index-1] != buf_handles[0]);
 
   // test if the data maintained by each instance is unique
   for (i=0;i<BUF_MEM_SIZE;i++) {
     buffered_data_0[i] = (uint8_t)rand();
-    simple_buffer_put(buf_handles[0], buffered_data_0[i]);
+    sb_put(buf_handles[0], buffered_data_0[i]);
     buffered_data_1[i] = (uint8_t)rand();
-    simple_buffer_put(buf_handles[buf_list_index-1], buffered_data_1[i]);
+    sb_put(buf_handles[buf_list_index-1], buffered_data_1[i]);
   }
 
   for (i=0;i<BUF_MEM_SIZE;i++) {
     TEST_ASSERT(
-      simple_buffer_get(buf_handles[0], &returned_data) == SB_ERR_NONE
+      sb_get(buf_handles[0], &returned_data) == SB_ERR_NONE
     );
     TEST_ASSERT(returned_data == buffered_data_0[i]);
-    TEST_ASSERT(simple_buffer_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_NONE);
+    TEST_ASSERT(sb_get(buf_handles[buf_list_index-1], &returned_data) == SB_ERR_NONE);
     TEST_ASSERT(returned_data == buffered_data_1[i]);
   }
 
 }
 
-void test_simple_buffer_constructor_returns_error_when_buf_limit_reached(void)
+void test_sb_constructor_returns_error_when_buf_limit_reached(void)
 {
   uint8_t i;
   uint8_t extra_buffer[BUF_MEM_SIZE];
   sbd_t extra_sbd;
-  simple_buffer_attr_t attr;
+  sb_attr_t attr;
 
   attr.num_elem = BUF_MEM_SIZE;
 
   while(buf_list_index < SB_MAX_NUM_BUFFERS) {
     attr.buf_mem = &(buf_list[buf_list_index]);
     TEST_ASSERT(
-      simple_buffer_construct(&attr, &buf_handles[buf_list_index++]) == SB_ERR_NONE
+      sb_construct(&attr, &buf_handles[buf_list_index++]) == SB_ERR_NONE
     );
 
     TEST_ASSERT(buf_handles[buf_list_index-1] == buf_list_index-1);
@@ -243,7 +243,7 @@ void test_simple_buffer_constructor_returns_error_when_buf_limit_reached(void)
   // now that all the buffers are allocated, attempting to construct one more
   // should return an error code
   attr.buf_mem = &extra_buffer;
-  TEST_ASSERT(simple_buffer_construct(&attr, &extra_sbd) == SB_ERR_BUF_LIMIT);
+  TEST_ASSERT(sb_construct(&attr, &extra_sbd) == SB_ERR_BUF_LIMIT);
 }
 
 void test_simple_buffer_instances_can_be_different_sizes(void)
@@ -251,42 +251,42 @@ void test_simple_buffer_instances_can_be_different_sizes(void)
   uint8_t data;
   uint8_t i;
   uint8_t second_buf_max_size = 5;
-  simple_buffer_attr_t attr;
+  sb_attr_t attr;
 
   attr.num_elem = second_buf_max_size;
   attr.buf_mem = &(buf_list[buf_list_index]);
-  simple_buffer_construct(&attr, &buf_handles[buf_list_index++]);
+  sb_construct(&attr, &buf_handles[buf_list_index++]);
 
   // check that the error is thrown only after BUF_MEM_SIZE for buffer 0
   for (i=0;i<BUF_MEM_SIZE;i++) {
     data = (uint8_t)rand();
 
-    TEST_ASSERT(simple_buffer_put(buf_handles[0], data) == SB_ERR_NONE);
+    TEST_ASSERT(sb_put(buf_handles[0], data) == SB_ERR_NONE);
   }
 
-  TEST_ASSERT(simple_buffer_put(buf_handles[0], data) == SB_ERR_BUF_FULL);
+  TEST_ASSERT(sb_put(buf_handles[0], data) == SB_ERR_BUF_FULL);
 
   // check that error is thrown after second_buf_max_size for buffer 1
   for (i=0;i<second_buf_max_size;i++) {
     data = (uint8_t)rand();
 
     TEST_ASSERT(
-      simple_buffer_put(buf_handles[buf_list_index-1], data) == SB_ERR_NONE
+      sb_put(buf_handles[buf_list_index-1], data) == SB_ERR_NONE
     );
   }
 
   TEST_ASSERT(
-    simple_buffer_put(buf_handles[buf_list_index-1], data) == SB_ERR_BUF_FULL
+    sb_put(buf_handles[buf_list_index-1], data) == SB_ERR_BUF_FULL
   );
 }
 
-void test_simple_buffer_constructor_returns_error_passed_used_buf_mem(void)
+void test_sb_constructor_returns_error_passed_used_buf_mem(void)
 {
-  simple_buffer_attr_t attr;
+  sb_attr_t attr;
   attr.num_elem = BUF_MEM_SIZE;
   attr.buf_mem = &buf_list[0];
 
   TEST_ASSERT(
-    simple_buffer_construct(&attr, &buf_handles[buf_list_index-1]) == SB_ERR_BUF_IN_USE
+    sb_construct(&attr, &buf_handles[buf_list_index-1]) == SB_ERR_BUF_IN_USE
   );
 }
