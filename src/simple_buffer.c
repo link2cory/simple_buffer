@@ -83,6 +83,10 @@ sb_err_t sb_get(sbd_t sbd, uint8_t *data) {
   return err;
 }
 
+uint8_t sb_get_size(sbd_t sbd) {
+  return _sb[sbd].num_elem;
+}
+
 /*******************************************************************************
 * PRIVATE FUNCTION DEFINITIONS
 *******************************************************************************/

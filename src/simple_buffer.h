@@ -39,5 +39,6 @@ sb_err_t sb_construct(sb_attr_t *attr, sbd_t *sbd);
 sb_err_t sb_destruct(sbd_t *sbd);
 sb_err_t sb_put(sbd_t sbd, uint8_t data);
 sb_err_t sb_get(sbd_t sbd, uint8_t *data);
+sb_err_t sb_get_size(sbd_t sbd);
 
 #endif // _SIMPLE_BUFFER_H

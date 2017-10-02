@@ -290,3 +290,11 @@ void test_sb_constructor_returns_error_passed_used_buf_mem(void)
     sb_construct(&attr, &buf_handles[buf_list_index-1]) == SB_ERR_BUF_IN_USE
   );
 }
+
+void test_sb_get_size_returns_num_elements_in_buffer(void)
+{
+  uint8_t data;
+
+  sb_put(buf_handles[0], data);
+  TEST_ASSERT(sb_get_size(buf_handles[0]) == 1);
+}
